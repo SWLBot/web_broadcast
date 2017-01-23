@@ -14,15 +14,18 @@ class mysqll:
 		if not os.path.isfile(file_name) :
 			return -1
 		
-		filee = open(file_name,"r")
-		hostt = filee.readline().rstrip('\n').strip(' ')
-		userr = filee.readline().rstrip('\n').strip(' ')
-		tokenn = filee.readline().rstrip('\n').strip(' ')
-		dbname = filee.readline().rstrip('\n').strip(' ')
-		filee.close()
+		try:
+			file_pointer = open(file_name,"r")
+		except:
+			return -1
+		host_str = file_pointer.readline().rstrip('\n').strip(' ')
+		user_str = file_pointer.readline().rstrip('\n').strip(' ')
+		token_str = file_pointer.readline().rstrip('\n').strip(' ')
+		dbname_str = file_pointer.readline().rstrip('\n').strip(' ')
+		file_pointer.close()
 		
 		try:
-			self.db = pymysql.connect(hostt, userr, tokenn, dbname, use_unicode=True, charset="utf8")
+			self.db = pymysql.connect(host_str, user_str, token_str, dbname_str, use_unicode=True, charset="utf8")
 			self.cursor = self.db.cursor()
 			#cursor.execute('SET NAMES utf8;') 
 			#cursor.execute('SET CHARACTER SET utf8;')
@@ -33,9 +36,10 @@ class mysqll:
 		return 1
 	
 	#drop old table if exist!! be careful when using it!! 
-	def create_table(self, sql):
+	def create_table(self, sql, table_name):
 		try:
-			self.cursor.execute("DROP TABLE IF EXISTS EMPLOYEE")
+			drop_sql = "DROP TABLE IF EXISTS " + table_name
+			self.cursor.execute(drop_sql)
 			self.cursor.execute(sql)
 		except:
 			return -1

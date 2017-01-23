@@ -24,11 +24,10 @@
 	<script type="text/javascript" src={{ static_url("js/jquery-3.1.1.min.js") }}></script>
         <script>
 			
-		var index = 0;
-		var countt = 0;
+		var imgs_index = 0;
+		var time_count = 0;
 		var imgs = ["{{static_url("img/"+files[0]) }}","{{static_url("img/"+files[0]) }}"];
-		var timee = [5, 5];
-		var tmp_gain = 0;
+		var limit_time = [5, 5];
 		var schedule_dir_txt = '/home/tim/Desktop/broadcast/';
 
 	
@@ -48,8 +47,8 @@
 
 			var data =
 			{
-				"dirr": schedule_dir_txt,
-				"modee": 1
+				"schedule_dir": schedule_dir_txt,
+				"arrange_mode": 1
 			};
 			var dataToSend = JSON.stringify(data);
 			var pattern = /(.+; *)?_xsrf *= *([^;" ]+)/ ;
@@ -58,7 +57,6 @@
 			{
 				dataToSend._xsrf = xsrf[3];
 			}
-			tmp_gain = 0;
 
 			$.ajax({
 					url: '/db_schedule',
@@ -68,8 +66,7 @@
 					success: function (jsonResponse)
 					{
 						var objresponse = JSON.parse(jsonResponse);
-						tmp_gain = objresponse['num'];
-						if (tmp_gain > 0)
+						if (objresponse['num'] > 0)
 						{
 							console.log('inc_schedule scuess');
 						}
@@ -84,7 +81,7 @@
 		       		 });
 		}
 	
-		function next_schedule()
+		function load_next_schedule()
 		{
 			$.ajaxSetup({
 			    beforeSend: function (jqXHR, settings)  {
@@ -99,7 +96,7 @@
 			}});
 			var data =
 			{
-			    "dirr": schedule_dir_txt
+			    "schedule_dir": schedule_dir_txt
 			};
 			var dataToSend = JSON.stringify(data);
 			var pattern = /(.+; *)?_xsrf *= *([^;" ]+)/ ;
@@ -108,9 +105,6 @@
 			{
 				dataToSend._xsrf = xsrf[3];
 			}
-			var tmp_dir = "";
-			var tmp_time = 5;
-			var tmp_pass = 0;
 			
 			$.ajax({
 				url: '/txt_schedule',
@@ -120,24 +114,20 @@
 				success: function (jsonResponse) 
 				{
 					var objresponse = JSON.parse(jsonResponse);
-					//console.log(objresponse['anss']);
-					tmp_dir = '/static/'+objresponse['anss'][0];
-					tmp_time = objresponse['anss'][1];
-					tmp_pass = objresponse['anss'][2];
-					if(index==1)
+					if(imgs_index==1)
 					{
-						imgs[0] = tmp_dir;
-						timee[0] = tmp_time;
+						imgs[0] = ('/static/'+objresponse['next_img']);
+						limit_time[0] = objresponse['limit_time'];
 					}
-					else if(index==0)
+					else if(imgs_index==0)
 					{
-						imgs[1] = tmp_dir;
-						timee[1] = tmp_time;
+						imgs[1] = ('/static/'+objresponse['next_img']);
+						limit_time[1] = objresponse['limit_time'];
 					}
 
-					if (tmp_pass == 0)
+					if (objresponse['enough_schedule'] == 0)
 					{
-						console.log("call inc_schedule");
+						//console.log("call inc_schedule");
 						inc_schedule();
 					}
 				},
@@ -147,18 +137,15 @@
 					console.log(textStatus);
 					console.log(error);
 					console.log("load_schedule error");
-					tmp_dir = "{{static_url("img/0.jpg")}}";
-					tmp_time = 5;
-					tmp_pass = 0;
-					if(index==1)
+					if(imgs_index==1)
 					{
-						imgs[0] = tmp_dir;
-						timee[0] = tmp_time;
+						imgs[0] = "{{static_url("img/0.jpg")}}";
+						limit_time[0] = 5;
 					}
-					else if(index==0)
+					else if(imgs_index==0)
 					{
-						imgs[1] = tmp_dir;
-						timee[1] = tmp_time;
+						imgs[1] = "{{static_url("img/0.jpg")}}";
+						limit_time[1] = 5;
 					}
 				}
 			});
@@ -168,10 +155,10 @@
 
 		function slideshow()
 		{
-			console.log(imgs[0]);
-			console.log(imgs[1]);
-			index = (index + 1) % 2;
-			$('img[name="pic"]').attr("src",imgs[index]);
+			//console.log(imgs[0]);
+			//console.log(imgs[1]);
+			imgs_index = (imgs_index + 1) % 2;
+			$('img[name="pic"]').attr("src",imgs[imgs_index]);
 			console.log("change");
 			//document.pic.height = window.screen.height;
 			//document.pic.width = window.screen.width;
@@ -179,20 +166,17 @@
 	
 		function timerr()
 		{
-			if(countt % timee[index] == timee[index]-1)
+			if(time_count % limit_time[imgs_index] == limit_time[imgs_index]-1)
 			{
-				next_schedule();
+				load_next_schedule();
 				slideshow();
 			}
 		
-			countt = (countt+1) % 60;
+			time_count = (time_count+1) % 60;
 		}
 	
 	
 		window.setInterval(timerr,1000);
-            //$(document).ready(function(){
-            //    setInterval(timerr,1000);
-            //});
         </script>
     </body>
 </html>
