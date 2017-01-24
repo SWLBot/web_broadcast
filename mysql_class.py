@@ -1,7 +1,7 @@
 import os.path
 import pymysql
 
-class mysqll:
+class mysql:
 	def __init__(self, db=None, cursor=None):
 		self.db = db;
 		self.cursor = cursor;
@@ -10,7 +10,7 @@ class mysqll:
 		return self
 	
 	#file dir where file store host\n user\n password\n dbname\n
-	def connectt(self, file_name):
+	def connect(self, file_name):
 		if not os.path.isfile(file_name) :
 			return -1
 		
@@ -46,7 +46,7 @@ class mysqll:
 		return 1
 	
 	#insert, update, delete query
-	def cmdd(self, sql):
+	def cmd(self, sql):
 		try:
 			self.cursor.execute(sql)
 			self.db.commit()
@@ -56,7 +56,7 @@ class mysqll:
 		return 1
 	
 	#find query
-	def queryy(self, sql):
+	def query(self, sql):
 		try:
 			self.cursor.execute(sql)
 			result = self.cursor.fetchall()
@@ -64,7 +64,7 @@ class mysqll:
 			result = -1
 		return result
 
-	def closee(self):
+	def close(self):
 		self.db.close()
 		
 	def __exit__(self, exc_type, exc_value, traceback):

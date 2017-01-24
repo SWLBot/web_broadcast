@@ -1,4 +1,4 @@
-from mysql_class import mysqll
+from mysql_class import mysql
 from random import sample
 from datetime import date
 from datetime import datetime
@@ -18,8 +18,8 @@ def arrange_schedule(json_obj):
 	file_name = "sql_token"
 	
 	#connect to mysql
-	db = mysqll()
-	if db.connectt(file_name) == -1:
+	db = mysql()
+	if db.connect(file_name) == -1:
 		return_msg["num"] = 0
 		return return_msg
 	
@@ -29,7 +29,7 @@ def arrange_schedule(json_obj):
 			+"WHERE TO_DAYS(NOW())-TO_DAYS(img_end_date)>0 " \
 			+"or (TO_DAYS(NOW())-TO_DAYS(img_end_date)=0 and TIME_TO_SEC(DATE_FORMAT(NOW(), '%H:%i:%s'))-TIME_TO_SEC(img_end_time)>0)")
 	
-	if db.cmdd(sql) == -1:
+	if db.cmd(sql) == -1:
 		update_fail = True
 	
 	#find images that may be schedule
@@ -41,7 +41,7 @@ def arrange_schedule(json_obj):
 			+" LEFT JOIN (SELECT type_id, type_dir FROM image_type) a1 on a0.type_id=a1.type_id "
 	#print(sql)
 	
-	pure_result = db.queryy(sql)
+	pure_result = db.query(sql)
 	if pure_result == -1:
 		find_fail = True
 	else:
@@ -71,7 +71,7 @@ def arrange_schedule(json_obj):
 		if len(deal_result)>0:
 			for tt in range(len(deal_result)):
 				sql = "UPDATE image_data SET img_display_count=img_display_count+1 WHERE img_id='"+deal_result[tt][0]+"'"
-				if db.cmdd(sql) == -1:
+				if db.cmd(sql) == -1:
 					update_fail = True
 				else :
 					int_str1 = str(deal_result[tt][2])
