@@ -171,7 +171,7 @@ def load_schedule(json_obj):
 #the api can only edit furtre schedule. 
 #It can edit schedule not to print image by setting img_check=0 or edit furtre schedule to print new image.
 def edit_schedule(json_obj):
-	schedule_dir = json_obj["dirr"]
+	schedule_dir = json_obj["schedule_dir"]
 	next_img = json_obj["next_img"]
 	img_check = json_obj["img_check"]
 	img_id = json_obj["img_id"]
