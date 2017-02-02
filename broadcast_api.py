@@ -15,11 +15,9 @@ def arrange_schedule(json_obj):
 	find_fail = False
 	deal_result = []
 	
-	file_name = "sql_token"
-	
 	#connect to mysql
 	db = mysql()
-	if db.connect(file_name) == -1:
+	if db.connect() == -1:
 		return_msg["num"] = 0
 		return return_msg
 	
@@ -83,6 +81,8 @@ def arrange_schedule(json_obj):
 		file_pointer.close()
 	except:
 		"Do noting"
+	
+	db.close()
 	
 	return_msg["num"] = add_num
 	return return_msg
